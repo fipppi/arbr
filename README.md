@@ -6,9 +6,42 @@ Allows you to create, delete and navigate to / between git worktrees from a cent
 
 ## Install
 
+### Via install script (recommended)
+
+Downloads the latest release binary to `~/.local/bin`, clears Gatekeeper quarantine and adds `~/.local/bin` to your PATH if it's not already:
+
 ```sh
-go install .          # (or `go build -o arbr .`)
-eval "$(command arbr init)" # add shell wrapper to ~/.zshrc to allow arbr to change your working directory
+curl -fsSL https://raw.githubusercontent.com/fipppi/arbr/main/install.sh | bash
+```
+
+### Via pre-built binary
+
+Grab the [latest release](https://github.com/fipppi/arbr/releases/latest) for Apple Silicon:
+
+```sh
+mkdir -p ~/.local/bin # create ~/.local/bin if it doesn't exist
+curl -fsSL -o ~/.local/bin/arbr https://github.com/fipppi/arbr/releases/latest/download/arbr # download the release to ~/.local/bin
+chmod +x ~/.local/bin/arbr # make it executable
+
+# add ~/.local/bin to your PATH if it's not already there (zsh - ymmv)
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc && source ~/.zshrc
+
+# macOS Gatekeeper may block the binary from running as it's unsigned - remove it from quarantine if you receive an error while running it:
+xattr -d com.apple.quarantine ~/.local/bin/arbr
+```
+
+### Via `go install`
+
+`go install github.com/fipppi/arbr@latest`
+
+### Build from source
+
+`git clone https://github.com/fipppi/arbr && cd arbr && go build .`
+
+### Shell wrapper
+
+```sh
+eval "$(command arbr init)" # add to ~/.zshrc to allow arbr to change your working directory
 ```
 
 Once installed, `U` inside the TUI downloads the latest GitHub release and replaces the
@@ -60,11 +93,7 @@ defined in the config file for each project.
 ```json
 {
   "sync_files": {
-    "~/git/backend": [
-      ".npmrc",
-      "apps/web/.env.local",
-      "packages/i18n/.env"
-    ]
+    "~/git/backend": [".npmrc", "apps/web/.env.local", "packages/i18n/.env"]
   }
 }
 ```
